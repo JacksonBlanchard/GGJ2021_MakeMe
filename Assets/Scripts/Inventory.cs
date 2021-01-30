@@ -16,9 +16,8 @@ public class Inventory
     public void AddItem(Item item)
     {
         itemList.Add(item);
-        Debug.Log("new inventory size " + itemList.Count);
+        Debug.Log("item " + item.name + " added to inventory (size " + itemList.Count + ")");
     }
-
 
     public bool Contains(Item.ItemType itemType)
     {

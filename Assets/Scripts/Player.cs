@@ -41,6 +41,7 @@ public class Player : MonoBehaviour
     void Awake()
     {
         cam = Camera.main;
+        cam.cullingMask = 7 << 0;
         inventory = new Inventory();
         sphereBody = playerSphere.GetComponent<Rigidbody>();
         controller = playerStand.GetComponent<CharacterController>();
@@ -131,6 +132,7 @@ public class Player : MonoBehaviour
     public void AddToInventory(Item item)
     {
         inventory.AddItem(item);
+        UpdateCameraCullingMask(item);
 
         //TEMPORARY, FOR TESTING
         limbCount++;
@@ -141,6 +143,13 @@ public class Player : MonoBehaviour
         return inventory.Contains(itemType);
     }
 
+    private void UpdateCameraCullingMask(Item item)
+    {
+        if(item.itemType == Item.ItemType.Nose)
+        {
+        }
+    }
+            
     //Author: RIT_Kyle
     //If the player has no arms or legs, they move by rolling
     public void MoveRoll()

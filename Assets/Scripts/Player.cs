@@ -9,16 +9,76 @@ public class Player : MonoBehaviour
 
     public Interactable focus;
 
+    public GameObject playerSphere;
+    public GameObject playerStand;
+
+    private Rigidbody sphereBody;
+
+    //Used to test different movement modes
+    //0 = no limbs, 1 = hopping on one limb, 2 = walking normally
+    public int limbCount;
+    private int prevLimbCount;
+    
+    public float rollSpeed;
+    
+    public float hopSpeed;
+    public float hopHeight;
+
+    public float walkSpeed;
+    public float jumpHeight;
+
+    public float gravity;
+    public Vector3 velocity;
+
+    public bool onGround;
+    public Transform groundCheck;
+    private float groundCheckRadius;
+    public LayerMask groundMask;
+
+    public CharacterController controller;
+
     // Start is called before the first frame update
     void Awake()
     {
         cam = Camera.main;
         inventory = new Inventory();
+        sphereBody = playerSphere.GetComponent<Rigidbody>();
+        controller = playerStand.GetComponent<CharacterController>();
+        groundCheckRadius = 0.25f;
+        SetUpNewBody();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (limbCount == 0)
+        {
+            MoveRoll();
+        }
+        else if (limbCount == 1)
+        {
+            MoveHop();
+        }
+        else
+        {
+            MoveWalk();
+        }
+
+        //Check if the player is grounded
+        onGround = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundMask);
+
+        //Reset velocity when grounded
+        if (onGround && velocity.y < 0)
+        {
+            velocity.y = -0.2f;
+        }
+
+        //Allow the player to jump if they have 2 limbs and are grounded
+        if (limbCount >= 2 && onGround && Input.GetButtonDown("Jump"))
+        {
+            Jump();
+        }
+
         // press left mouse button
         if(Input.GetMouseButtonDown(0))
         {
@@ -36,6 +96,17 @@ public class Player : MonoBehaviour
                 }
             }
         }
+    }
+
+    void FixedUpdate()
+    {
+        //If the player's number of limbs has changed, give them the corresponding body
+        if (prevLimbCount != limbCount)
+        {
+            SetUpNewBody();
+            Debug.Log("Setting up new body");
+        }
+        prevLimbCount = limbCount;
     }
 
     void SetFocus(Interactable newFocus)
@@ -60,10 +131,116 @@ public class Player : MonoBehaviour
     public void AddToInventory(Item item)
     {
         inventory.AddItem(item);
+
+        //TEMPORARY, FOR TESTING
+        limbCount++;
     }
 
     public bool InventoryContains(Item.ItemType itemType)
     {
         return inventory.Contains(itemType);
+    }
+
+    //Author: RIT_Kyle
+    //If the player has no arms or legs, they move by rolling
+    public void MoveRoll()
+    {
+        //Get player input
+        Vector3 inputDirection = new Vector3(Input.GetAxis("Vertical"), 0, -Input.GetAxis("Horizontal"));
+
+        //Make input relative to camera orientation
+        Vector3 actualDirection = cam.transform.TransformDirection(inputDirection);
+
+        sphereBody.AddTorque(actualDirection * rollSpeed * Time.deltaTime);
+    }
+
+    //Author: RIT_Kyle
+    //If the player has a single arm or leg, they move by hopping
+    public void MoveHop()
+    {
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+
+        velocity.y += gravity;
+
+        Vector3 move = controller.transform.right * x + velocity + controller.transform.forward * z;
+
+        //Force the player to jump if they try to move while grounded
+        if (onGround == true && (move.x != 0 || move.z != 0))
+        {
+            Hop();
+        }
+
+        controller.Move(move * hopSpeed * Time.deltaTime);
+    }
+
+    //Author: RIT_Kyle
+    //If the player has two or more arms or legs, they move by walking
+    public void MoveWalk()
+    {
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+
+        velocity.y += gravity;
+
+        Vector3 move = controller.transform.right * x + velocity + controller.transform.forward * z;
+
+        controller.Move(move * hopSpeed * Time.deltaTime);
+    }
+
+    //Author: RIT_Kyle
+    //The player can perform short hops when they have one limb
+    public void Hop()
+    {
+        velocity.y = Mathf.Sqrt(hopHeight * -2f * gravity);
+    }
+
+    //Author: RIT_Kyle
+    //The player can perform higher jumps when they have two limbs
+    public void Jump()
+    {
+        velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+    }
+
+    //Author: RIT_Kyle
+    //Set information necessary for switching from Sphere to Standing body
+    public void SetUpNewBody()
+    {
+        //Set player movement mode based on number of limbs in possession
+        if (limbCount == 0)
+        {           
+            playerSphere.SetActive(true);
+            playerStand.SetActive(false);
+            playerSphere.transform.position = playerStand.transform.position;
+            playerStand.transform.localEulerAngles = new Vector3(0, playerSphere.transform.localEulerAngles.y, 0);
+
+            cam.gameObject.GetComponent<MouseLook>().ResetForNewBody(playerSphere);
+        }
+        else if (limbCount == 1)
+        {
+            playerSphere.SetActive(false);
+            playerStand.SetActive(true);
+
+            if (prevLimbCount == 0)
+            {
+                playerStand.transform.position = playerSphere.transform.position;
+                playerStand.transform.localEulerAngles = new Vector3(0, playerSphere.transform.localEulerAngles.y, 0);
+            }
+
+            cam.gameObject.GetComponent<MouseLook>().ResetForNewBody(playerStand);
+        }
+        else
+        {
+            playerSphere.SetActive(false);
+            playerStand.SetActive(true);
+
+            if (prevLimbCount == 0)
+            {
+                playerStand.transform.position = playerSphere.transform.position;
+                playerStand.transform.localEulerAngles = new Vector3(0, playerSphere.transform.localEulerAngles.y, 0);
+            }           
+
+            cam.gameObject.GetComponent<MouseLook>().ResetForNewBody(playerStand);
+        }
     }
 }

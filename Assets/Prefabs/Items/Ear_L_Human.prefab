@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1924470350975577167}
   - component: {fileID: 4418559959566604421}
   - component: {fileID: 5407826289090017926}
+  - component: {fileID: 3262318895628216372}
   - component: {fileID: 6116672033445455672}
   m_Layer: 0
   m_Name: Ear_L_Human
@@ -97,6 +98,22 @@ CapsuleCollider:
   m_Height: 0.00433512
   m_Direction: 1
   m_Center: {x: -0.008506554, y: 0.0044667562, z: 0.001742806}
+--- !u!54 &3262318895628216372
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2761019586078112080}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!114 &6116672033445455672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,6 +126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb0cf724c8a5104388629399183e37e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 3
+  radius: 10
   player: {fileID: 0}
-  itemType: 3
+  itemType: 5

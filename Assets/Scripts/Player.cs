@@ -14,6 +14,11 @@ public class Player : MonoBehaviour
 
     private Rigidbody sphereBody;
 
+    public GameObject parentStartPoint;
+
+    //Used to scale the player after eating
+    public float sizeMultiplier;
+
     //Used to test different movement modes
     //0 = no limbs, 1 = hopping on one limb, 2 = walking normally
     public int limbCount;
@@ -47,6 +52,7 @@ public class Player : MonoBehaviour
         controller = playerStand.GetComponent<CharacterController>();
         groundCheckRadius = 0.25f;
         SetUpNewBody();
+        sizeMultiplier = 1f;
     }
 
     // Update is called once per frame
@@ -78,10 +84,13 @@ public class Player : MonoBehaviour
         if (limbCount >= 2 && onGround && Input.GetButtonDown("Jump"))
         {
             Jump();
+
+            //TEMPORARY, FOR TESTING
+            ResizePlayer(0.1f);
         }
 
         // press left mouse button
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             // create ray
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -251,5 +260,31 @@ public class Player : MonoBehaviour
 
             cam.gameObject.GetComponent<MouseLook>().ResetForNewBody(playerStand);
         }
+    }
+
+    //Author: RIT_Kyle
+    //Physically resize player bodies by scaling the parent. Then adjust forces to compensate for increased size
+    //Should be called when the player eats things
+    public void ResizePlayer(float sizeChange)
+    {
+        //Temporarily reset values to their initial states
+        rollSpeed /= sizeMultiplier;
+        hopSpeed /= sizeMultiplier;
+        hopHeight /= sizeMultiplier;
+        walkSpeed /= sizeMultiplier;
+        jumpHeight /= sizeMultiplier;
+
+        //Modify sizeMultiplier to new value
+        sizeMultiplier += sizeChange;
+
+        //Set values to match new size
+        rollSpeed *= sizeMultiplier;
+        hopSpeed *= sizeMultiplier;
+        hopHeight *= sizeMultiplier;
+        walkSpeed *= sizeMultiplier;
+        jumpHeight *= sizeMultiplier;
+
+        //Resize parent player tranform to scale all child bodies
+        parentStartPoint.transform.localScale = Vector3.one * sizeMultiplier;
     }
 }

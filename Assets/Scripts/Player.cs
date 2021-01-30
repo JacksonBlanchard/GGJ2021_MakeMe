@@ -41,7 +41,17 @@ public class Player : MonoBehaviour
     void Awake()
     {
         cam = Camera.main;
-        cam.cullingMask = 7 << 0;
+        cam.cullingMask = -1;
+        cam.cullingMask &= ~(1 << LayerMask.NameToLayer("Smell"));
+        /*
+#if DEBUG
+        cam.cullingMask = -1; // see everything
+#else
+        cam.cullingMask = 0; // player starts off completely blind
+#endif
+        */
+        Debug.Log("culling mask: " + cam.cullingMask);
+
         inventory = new Inventory();
         sphereBody = playerSphere.GetComponent<Rigidbody>();
         controller = playerStand.GetComponent<CharacterController>();
@@ -93,6 +103,7 @@ public class Player : MonoBehaviour
                 Interactable interactable = hit.collider.GetComponent<Interactable>();
                 if(interactable != null)
                 {
+                    Debug.Log("Ray collided with " + interactable.name);
                     SetFocus(interactable);
                 }
             }
@@ -110,6 +121,8 @@ public class Player : MonoBehaviour
         prevLimbCount = limbCount;
     }
 
+    // Author: RIT_Jackson
+    // Set the interactable object as the focus for interaction
     void SetFocus(Interactable newFocus)
     {
         if(newFocus != focus)
@@ -122,6 +135,8 @@ public class Player : MonoBehaviour
         newFocus.onFocused(gameObject);
     }
 
+    // Author: RIT_Jackson
+    // Reset the current focus object
     void RemoveFocus()
     {
         if(focus != null)
@@ -129,25 +144,21 @@ public class Player : MonoBehaviour
         focus = null;
     }
 
+    // Author: RIT_Jackson
+    // Add the item to the inventory
     public void AddToInventory(Item item)
     {
         inventory.AddItem(item);
-        UpdateCameraCullingMask(item);
 
         //TEMPORARY, FOR TESTING
         limbCount++;
     }
-
+    
+    // Author: RIT_Jackson
+    // Check if the player's inventory contains an Item of the specific ItemType
     public bool InventoryContains(Item.ItemType itemType)
     {
         return inventory.Contains(itemType);
-    }
-
-    private void UpdateCameraCullingMask(Item item)
-    {
-        if(item.itemType == Item.ItemType.Nose)
-        {
-        }
     }
             
     //Author: RIT_Kyle
@@ -251,5 +262,40 @@ public class Player : MonoBehaviour
 
             cam.gameObject.GetComponent<MouseLook>().ResetForNewBody(playerStand);
         }
+    }
+
+    // Author: RIT_Jackson
+    // Turn on the bit using an OR operation:
+    public void Show(string layerName)
+    {
+        cam.cullingMask |= 1 << LayerMask.NameToLayer(layerName);
+    }
+
+    // Author: RIT_Jackson
+    // Turn off the bit using an AND operation with the complement of the shifted int:
+    public void Hide(string layerName)
+    {
+        cam.cullingMask &= ~(1 << LayerMask.NameToLayer(layerName));
+    }
+
+    // Author: RIT_Jackson
+    // Toggle the bit using a XOR operation:
+    public void Toggle(string layerName)
+    {
+        cam.cullingMask ^= 1 << LayerMask.NameToLayer(layerName);
+    }
+
+    // Author: RIT_Jackson
+    // Make camera orthographic
+    public void Orthographic()
+    {
+        cam.orthographic = true;
+    }
+
+    // Author: RIT_Jackson
+    // Make camera perspective
+    public void Perspective()
+    {
+        cam.orthographic = false;
     }
 }

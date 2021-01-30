@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     void Awake()
     {
         cam = Camera.main;
+        cam.cullingMask = 7 << 0;
         inventory = new Inventory();
     }
 
@@ -60,10 +61,19 @@ public class Player : MonoBehaviour
     public void AddToInventory(Item item)
     {
         inventory.AddItem(item);
+        UpdateCameraCullingMask(item);
     }
 
     public bool InventoryContains(Item.ItemType itemType)
     {
         return inventory.Contains(itemType);
+    }
+
+    private void UpdateCameraCullingMask(Item item)
+    {
+        if(item.itemType == Item.ItemType.Nose)
+        {
+            
+        }
     }
 }

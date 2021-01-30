@@ -14,7 +14,6 @@ public class Item : Interactable
     }
 
     public ItemType itemType;
-    public int amount;
 
     override public void Interact()
     {

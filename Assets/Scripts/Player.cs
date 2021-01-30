@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public Camera cam;
+    private Camera cam;
     private Inventory inventory;
 
     public Interactable focus;
@@ -103,6 +103,7 @@ public class Player : MonoBehaviour
                 Interactable interactable = hit.collider.GetComponent<Interactable>();
                 if(interactable != null)
                 {
+                    Debug.Log("Ray collided with " + interactable.name);
                     SetFocus(interactable);
                 }
             }
@@ -282,5 +283,19 @@ public class Player : MonoBehaviour
     public void Toggle(string layerName)
     {
         cam.cullingMask ^= 1 << LayerMask.NameToLayer(layerName);
+    }
+
+    // Author: RIT_Jackson
+    // Make camera orthographic
+    public void Orthographic()
+    {
+        cam.orthographic = true;
+    }
+
+    // Author: RIT_Jackson
+    // Make camera perspective
+    public void Perspective()
+    {
+        cam.orthographic = false;
     }
 }

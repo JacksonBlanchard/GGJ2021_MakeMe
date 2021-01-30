@@ -16,6 +16,8 @@ public class Item : Interactable
         Body,
         Head,
         Mouth,
+        Tail,
+        Wing,
     }
 
     public ItemType itemType;
@@ -28,10 +30,10 @@ public class Item : Interactable
                 player.GetComponent<Player>().Show("Smell");
                 break;
             case ItemType.Eye_Orthographic: // set camera to Orthographic
-                player.GetComponent<Player>().cam.orthographic = true;
+                player.GetComponent<Player>().Orthographic();
                 break;
             case ItemType.Eye_Perspective: // set camera to Perspective
-                player.GetComponent<Player>().cam.orthographic = false;
+                player.GetComponent<Player>().Perspective();
                 break;
         }
 

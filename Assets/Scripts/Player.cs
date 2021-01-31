@@ -298,6 +298,7 @@ public class Player : MonoBehaviour
 
         //Resize parent player tranform to scale all child bodies
         parentStartPoint.transform.localScale = Vector3.one * sizeMultiplier;
+    }
 
     // Author: RIT_Jackson
     // Turn on the bit using an OR operation:

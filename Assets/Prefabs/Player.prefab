@@ -46,10 +46,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a281f1d393757604a8f430776e5e212c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 7810086627908594900}
+  animator: {fileID: 0}
   focus: {fileID: 0}
   playerSphere: {fileID: 7810086628865145242}
   playerStand: {fileID: 7810086628062023261}
+  parentStartPoint: {fileID: 0}
+  sizeMultiplier: 0
   limbCount: 0
+  armCount: 0
+  legCount: 0
   rollSpeed: 50
   hopSpeed: 5
   hopHeight: 10

@@ -30,4 +30,15 @@ public class Inventory
         }
         return false;
     }
+
+    public int ItemTypeCount(Item.ItemType itemType)
+    {
+        int count = 0;
+        foreach(Item item in itemList)
+        {
+            if(item.itemType == itemType)
+                count++;
+        }
+        return count;
+    }
 }

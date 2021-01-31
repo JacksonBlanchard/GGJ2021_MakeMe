@@ -1,11 +1,29 @@
 fileFormatVersion: 2
-guid: 6e7ebbbaf38ccc04e815f4a152784a8f
+guid: 6086671a056132342918326561833110
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
   - first:
       74: -2594830005207816443
     second: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|Idle"
+  - first:
+      74: -7381733323470255805
+    second: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|OneLegWalk"
+  - first:
+      74: -4858873635259819529
+    second: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|OnlyArmIdle"
+  - first:
+      74: -2332048310065069479
+    second: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|OnlyarmWalk"
+  - first:
+      74: -4776795456244445001
+    second: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|TwoLegWalk"
+  - first:
+      74: 972196688117563126
+    second: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|WingFly"
+  - first:
+      74: -9106997624635145202
+    second: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|WingIdle"
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -33,36 +51,7 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations:
-    - serializedVersion: 16
-      name: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|Idle"
-      takeName: "\u30A2\u30FC\u30DE\u30C1\u30E5\u30A2|Idle"
-      internalID: 0
-      firstFrame: 0
-      lastFrame: 59
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+    clipAnimations: []
     isReadable: 0
   meshes:
     lODScreenPercentages: []

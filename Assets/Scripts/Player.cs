@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private Camera cam;
+    public Camera cam;
     private Inventory inventory;
+    public Animator animator;
 
     public Interactable focus;
 
+    public GameObject playerModel;
     public GameObject playerSphere;
     public GameObject playerStand;
 
@@ -23,6 +25,9 @@ public class Player : MonoBehaviour
     //0 = no limbs, 1 = hopping on one limb, 2 = walking normally
     public int limbCount;
     private int prevLimbCount;
+
+    public int armCount;
+    public int legCount;
     
     public float rollSpeed;
     
@@ -42,12 +47,33 @@ public class Player : MonoBehaviour
 
     public CharacterController controller;
 
+    /* Animated GameObject Prefabs */
+    // arms
+    public GameObject humanArmL;
+    public GameObject humanArmR;
+    public GameObject noFingerArmL;
+    public GameObject noFingerArmR;
+    public GameObject wingL;
+    public GameObject wingR;
+    // legs
+    public GameObject humanLegL;
+    public GameObject humanLegR;
+    public GameObject miniLegL;
+    public GameObject miniLegR;
+    public GameObject octoLegL;
+    public GameObject octoLegR;
+    // tails
+    public GameObject dolphinTail;
+    public GameObject hairBallTail;
+    public GameObject reptilesTail;
+
     // Start is called before the first frame update
     void Awake()
     {
-        cam = Camera.main;
-        cam.cullingMask = -1;
-        cam.cullingMask &= ~(1 << LayerMask.NameToLayer("Smell"));
+        Hide("Player");
+        //cam = Camera.main;
+        //cam.cullingMask = -1;
+        ///cam.cullingMask &= ~(1 << LayerMask.NameToLayer("Smell"));
         /*
 #if DEBUG
         cam.cullingMask = -1; // see everything
@@ -58,6 +84,8 @@ public class Player : MonoBehaviour
         Debug.Log("culling mask: " + cam.cullingMask);
 
         inventory = new Inventory();
+        //animator = gameObject.GetComponentInChildren<Animator>();
+
         sphereBody = playerSphere.GetComponent<Rigidbody>();
         controller = playerStand.GetComponent<CharacterController>();
         groundCheckRadius = 0.25f;
@@ -121,6 +149,11 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+        armCount = inventory.ItemTypeCount(Item.ItemType.Arm);
+        legCount = inventory.ItemTypeCount(Item.ItemType.Leg);
+
+        limbCount = armCount + legCount;
+
         //If the player's number of limbs has changed, give them the corresponding body
         if (prevLimbCount != limbCount)
         {
@@ -159,8 +192,8 @@ public class Player : MonoBehaviour
     {
         inventory.AddItem(item);
 
-        //TEMPORARY, FOR TESTING
-        limbCount++;
+        animator.SetInteger("armCount", armCount);
+        animator.SetInteger("legCount", legCount);
     }
     
     // Author: RIT_Jackson
@@ -181,6 +214,9 @@ public class Player : MonoBehaviour
         Vector3 actualDirection = cam.transform.TransformDirection(inputDirection);
 
         sphereBody.AddTorque(actualDirection * rollSpeed * Time.deltaTime);
+
+        playerModel.transform.position = playerSphere.transform.position;
+        playerModel.transform.rotation = playerSphere.transform.rotation;
     }
 
     //Author: RIT_Kyle
@@ -201,6 +237,15 @@ public class Player : MonoBehaviour
         }
 
         controller.Move(move * hopSpeed * Time.deltaTime);
+
+        float verticalOffset = 0f;
+        if (legCount > 0)
+            verticalOffset = 1.25f;
+        else if (armCount > 0)
+            verticalOffset = 0.5f;
+
+        playerModel.transform.position = playerStand.transform.position + new Vector3(0, verticalOffset, 0);
+        playerModel.transform.forward = playerStand.transform.forward;
     }
 
     //Author: RIT_Kyle
@@ -215,6 +260,15 @@ public class Player : MonoBehaviour
         Vector3 move = controller.transform.right * x + velocity + controller.transform.forward * z;
 
         controller.Move(move * hopSpeed * Time.deltaTime);
+
+        float verticalOffset = 0f;
+        if (legCount > 0)
+            verticalOffset = 1.25f;
+        else if (armCount > 0)
+            verticalOffset = 0.5f;
+
+        playerModel.transform.position = playerStand.transform.position + new Vector3(0, verticalOffset, 0);
+        playerModel.transform.forward = playerStand.transform.forward;
     }
 
     //Author: RIT_Kyle
@@ -235,6 +289,8 @@ public class Player : MonoBehaviour
     //Set information necessary for switching from Sphere to Standing body
     public void SetUpNewBody()
     {
+        Debug.Log("Setting up new body");
+
         //Set player movement mode based on number of limbs in possession
         if (limbCount == 0)
         {           
@@ -300,6 +356,79 @@ public class Player : MonoBehaviour
         parentStartPoint.transform.localScale = Vector3.one * sizeMultiplier;
 
     }
+
+    public void AddArm(string armName)
+    {
+        switch(armName)
+        {
+            case "Arm_L_Human":
+                Instantiate(humanArmL, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "Arm_R_Human":
+                Instantiate(humanArmR, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "NoFingerArm_L":
+                Instantiate(noFingerArmL, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "NoFingerArm_R":
+                Instantiate(noFingerArmR, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "Wing_L":
+                Instantiate(wingL, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "Wing_R":
+                Instantiate(wingR, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            default:
+                Instantiate(humanArmL, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+        }
+        Debug.Log("Added animated arm to model");
+    }
+
+    public void AddLeg(string legName)
+    {
+        switch (legName)
+        {
+            case "Leg_L_Human":
+                Instantiate(humanLegL, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "Leg_R_Human":
+                Instantiate(humanLegR, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "MiniLeg_L":
+                Instantiate(miniLegL, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "MiniLeg_R":
+                Instantiate(miniLegR, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "OctoLeg_L":
+                Instantiate(octoLegL, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "OctoLeg_R":
+                Instantiate(octoLegR, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+        }
+        Debug.Log("Added animated leg to model");
+    }
+
+    public void AddTail(string tailName)
+    {
+        switch (tailName)
+        {
+            case "DolphinTail":
+                Instantiate(dolphinTail, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "HairBallTail":
+                Instantiate(hairBallTail, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+            case "ReptilesTail":
+                Instantiate(reptilesTail, playerModel.transform.position, playerModel.transform.rotation, playerModel.transform);
+                break;
+        }
+        Debug.Log("Added animated tail to model");
+    }
+
     // Author: RIT_Jackson
     // Turn on the bit using an OR operation:
     public void Show(string layerName)

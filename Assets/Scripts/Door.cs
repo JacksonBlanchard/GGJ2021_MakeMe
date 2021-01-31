@@ -8,7 +8,7 @@ public class Door : Interactable
     {
         if(player.GetComponent<Player>().InventoryContains(Item.ItemType.Arm))
         {
-            Debug.Log("Door opened");
+            Debug.Log("Open door");
         }
         else
         {

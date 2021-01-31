@@ -356,8 +356,6 @@ public class Player : MonoBehaviour
         parentStartPoint.transform.localScale = Vector3.one * sizeMultiplier;
     }
 
-    }
-
     public void AddArm(string armName)
     {
         switch(armName)
